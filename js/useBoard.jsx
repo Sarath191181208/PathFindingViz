@@ -38,13 +38,14 @@ const numCols = parseInt(width / (boxSize + paddingSize));
 
 function Conway() {
   const [grid, setGrid] = useState(getEmptyBoard(numRows, numCols));
-
   const currGrid = useRef(grid);
   currGrid.current = grid;
   const setGridState = (val) => {
     setGrid(val);
     currGrid.current = grid;
   };
+
+  const [emptyCellColor, setEmptyCellColor] = useState("grey");
 
   const [running, setRunning] = useState(false);
   const runningRef = useRef(running);
@@ -68,13 +69,12 @@ function Conway() {
       setRunningState(false);
       alert("No path found");
       return;
-    } 
-    else if (tempArr === true) {
+    } else if (tempArr === true) {
       // path found
       setRunningState(false);
       alert("Path Sucessfully found !");
       return;
-    } 
+    }
 
     setGridState(tempArr);
 
@@ -128,6 +128,14 @@ function Conway() {
     }
   }
 
+  function hideMaze() {
+    if (emptyCellColor === "grey") {
+      setEmptyCellColor("black");
+    } else {
+      setEmptyCellColor("grey");
+    }
+  }
+
   function getColor(type) {
     switch (type) {
       case GRID_CELL_TYPES.WALL:
@@ -135,7 +143,7 @@ function Conway() {
       case GRID_CELL_TYPES.VISITED:
         return "cyan";
       case GRID_CELL_TYPES.EMPTY:
-        return "grey";
+        return emptyCellColor;
       case GRID_CELL_TYPES.START:
         return "blue";
       case GRID_CELL_TYPES.END:
@@ -148,8 +156,12 @@ function Conway() {
   return (
     <>
       <div id="settings">
-        <button onClick={clearBoard}>Clear</button>
-        <button onClick={generateRandomBoard}>Random</button>
+        <button onClick={clearBoard}>
+          <Clear />
+        </button>
+        <button onClick={generateRandomBoard}>
+          <Random />
+        </button>
         <button
           style={{
             color: running ? "grey" : "green",
@@ -158,8 +170,15 @@ function Conway() {
         >
           {running ? <Pause /> : <Play />}
         </button>
-        <button onClick={saveBoard}>Save</button>
-        <button onClick={loadBoard}>Load</button>
+        <button onClick={hideMaze}>
+          {emptyCellColor === "grey" ? <EyeSlash /> : <Eye />}
+        </button>
+        <button onClick={saveBoard}>
+          <Save />
+        </button>
+        <button onClick={loadBoard}>
+          <Load />
+        </button>
       </div>
       <div
         className="board"
@@ -193,6 +212,30 @@ function Play() {
   return <i className="fa-solid fa-play"></i>;
 }
 
+function Eye() {
+  return <i className="fa-solid fa-eye"></i>;
+}
+
+function EyeSlash() {
+  return <i className="fa-solid fa-eye-slash"></i>;
+}
+
+function Random() {
+  return <i className="fa-solid fa-random"></i>;
+}
+
+function Clear() {
+  return <i className="fa-solid fa-trash"></i>;
+}
+
+function Save() {
+  return <i className="fa-solid fa-save"></i>;
+}
+
+function Load() {
+  return <i className="fa-solid fa-upload"></i>;
+}
+
 function inBounds(row, col) {
   return row >= 0 && row < numRows && col >= 0 && col < numCols;
 }
@@ -202,7 +245,8 @@ function getNeighbours(grid, i, j) {
   for (let k = 0; k < SHORT_STEP_NEIGHBOURS.length; k++) {
     const [x, y] = SHORT_STEP_NEIGHBOURS[k](i, j);
 
-    const isEmptyOrEnd = (i, j) => grid[i][j] == GRID_CELL_TYPES.EMPTY || grid[i][j] == GRID_CELL_TYPES.END;; 
+    const isEmptyOrEnd = (i, j) =>
+      grid[i][j] == GRID_CELL_TYPES.EMPTY || grid[i][j] == GRID_CELL_TYPES.END;
     const isValidCell = (i, j) => inBounds(i, j) && isEmptyOrEnd(i, j);
 
     if (isValidCell(x, y)) {
