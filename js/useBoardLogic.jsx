@@ -2,10 +2,7 @@ const { useState, useCallback, useRef } = React;
 
 function getWindowDimensions() {
   const { innerWidth: width, innerHeight: height } = window;
-  return {
-    width,
-    height,
-  };
+  return { width, height };
 }
 
 const GRID_CELL_TYPES = {
@@ -16,27 +13,13 @@ const GRID_CELL_TYPES = {
   END: 2,
 };
 
-const SHORT_STEP_NEIGHBOURS = [
-  (row, col) => [row, col - 1],
-  (row, col) => [row, col + 1],
-  (row, col) => [row - 1, col],
-  (row, col) => [row + 1, col],
-];
-
-const LONG_STEP_NEIGHBOURS = [
-  (row, col) => [row, col - 2],
-  (row, col) => [row, col + 2],
-  (row, col) => [row - 2, col],
-  (row, col) => [row + 2, col],
-];
-
 const boxSize = 20;
 const { width, height } = getWindowDimensions();
 const paddingSize = 5;
-const numRows = parseInt((height-5*boxSize) / (boxSize + paddingSize));
-const numCols = parseInt((width-5*boxSize) / (boxSize + paddingSize));
+const numRows = parseInt((height - 5 * boxSize) / (boxSize + paddingSize));
+const numCols = parseInt((width - 5 * boxSize) / (boxSize + paddingSize));
 
-function Conway() {
+function useBoardState() {
   const [grid, setGrid] = useState(getEmptyBoard(numRows, numCols));
   const currGrid = useRef(grid);
   currGrid.current = grid;
@@ -60,7 +43,6 @@ function Conway() {
 
   const runSimulation = useCallback(() => {
     if (!runningRef.current) return;
-
     // getting the next generation arr
     let tempArr = getNextGen(currGrid.current);
 
@@ -89,12 +71,13 @@ function Conway() {
   }
 
   function resetBoard() {
-    stack = [];
+    DFSstack = [];
     setRunningState(false);
     setGridState(getEmptyBoard(numRows, numCols));
   }
 
   function loadBoard() {
+    resetBoard();
     const key = "board" + getKey(numRows, numCols);
     if (!(key in localStorage)) {
       alert("No board stored with current dimensions ");
@@ -102,11 +85,7 @@ function Conway() {
     }
     const board = localStorage.getItem(key);
     let grid = parseBoard(board);
-    // console.table(grid);
-    // grid = grid.map((row) => row.map((cell) => parseInt(cell))); // converting strings in grid to int
-    console.table(grid);
     setGridState(grid);
-    // parseBoard(board);
   }
 
   function generateRandomBoard() {
@@ -166,102 +145,36 @@ function Conway() {
     }
   }
 
-  return (
-    <>
-      <div id="settings">
-        <button title="Resets the entire board" onClick={resetBoard}>
-          <Clear />
-        </button>
-        <button
-          title="Generates a random maze with a start and end"
-          onClick={generateRandomBoard}
-        >
-          <Random />
-        </button>
-        <button
-          title="Toggles the solving of the maze"
-          style={{
-            color: running ? "grey" : "green",
-          }}
-          onClick={toggleStart}
-        >
-          {running ? <Pause /> : <Play />}
-        </button>
-        <button
-          title="Hide the cells of grey color i.e empty cells"
-          onClick={hideMaze}
-        >
-          {emptyCellColor === "grey" ? <EyeSlash /> : <Eye />}
-        </button>
-        <button
-          title="Saves the current board to local storage"
-          onClick={saveBoard}
-        >
-          <Save />
-        </button>
-        <button title="Loads the board from local storage" onClick={loadBoard}>
-          <Load />
-        </button>
-      </div>
-      <div
-        className="board"
-        style={{
-          gridTemplateColumns: `repeat(${numCols}, ${boxSize}px)`,
-        }}
-      >
-        {grid.map((row, i) =>
-          row.map((cellType, j) => (
-            <div
-                onClick={() => handleOnCellClick(i, j)}
-              className="board-ele"
-              key={`${i}-${j}`}
-              style={{
-                width: boxSize,
-                height: boxSize,
-                backgroundColor: getColor(cellType),
-              }}
-            ></div>
-          ))
-        )}
-      </div>
-    </>
-  );
+  return {
+    grid,
+    numCols,
+    boxSize,
+    resetBoard,
+    handleOnCellClick,
+    loadBoard,
+    saveBoard,
+    hideMaze,
+    toggleStart,
+    generateRandomBoard,
+    getColor,
+    running,
+    emptyCellColor,
+  };
 }
 
-function Pause() {
-  return <i className="fa-solid fa-pause"></i>;
-}
-function Play() {
-  return <i className="fa-solid fa-play"></i>;
-}
+const SHORT_STEP_NEIGHBOURS = [
+  (row, col) => [row, col - 1],
+  (row, col) => [row, col + 1],
+  (row, col) => [row - 1, col],
+  (row, col) => [row + 1, col],
+];
 
-function Eye() {
-  return <i className="fa-solid fa-eye"></i>;
-}
-
-function EyeSlash() {
-  return <i className="fa-solid fa-eye-slash"></i>;
-}
-
-function Random() {
-  return <i className="fa-solid fa-random"></i>;
-}
-
-function Clear() {
-  return <i className="fa-solid fa-trash"></i>;
-}
-
-function Save() {
-  return <i className="fa-solid fa-save"></i>;
-}
-
-function Load() {
-  return <i className="fa-solid fa-upload"></i>;
-}
-
-function inBounds(row, col) {
-  return row >= 0 && row < numRows && col >= 0 && col < numCols;
-}
+const LONG_STEP_NEIGHBOURS = [
+  (row, col) => [row, col - 2],
+  (row, col) => [row, col + 2],
+  (row, col) => [row - 2, col],
+  (row, col) => [row + 2, col],
+];
 
 function getNeighbours(grid, i, j) {
   let neighbours = [];
@@ -279,19 +192,19 @@ function getNeighbours(grid, i, j) {
   return neighbours;
 }
 
-let stack = [[0, 0]];
+let DFSstack = [[0, 0]];
 function getNextGen(grid) {
   // returns the next iteration of dfs
-  if (stack.length == 0) return false;
+  if (DFSstack.length == 0) return false;
   let tempArr = getCopy(grid);
   const isEnd = (i, j) => grid[i][j] == GRID_CELL_TYPES.END;
-  let [i, j] = stack.pop();
+  let [i, j] = DFSstack.pop();
   const neighbours = getNeighbours(grid, i, j);
   for (let k = 0; k < neighbours.length; k++) {
     const [x, y] = neighbours[k];
     if (isEnd(x, y)) return true;
     tempArr[x][y] = GRID_CELL_TYPES.VISITED;
-    stack.push([x, y]);
+    DFSstack.push([x, y]);
   }
 
   return tempArr;

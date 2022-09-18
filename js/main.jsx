@@ -3,10 +3,5 @@ const { createRoot } = ReactDOM;
 
 
 const root = createRoot(document.getElementById("root"));
-root.render(<Main />);
+root.render(<Board />);
 
-function Main() {
-  return (
-    <Conway/>
-  );
-}
