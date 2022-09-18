@@ -71,7 +71,7 @@ function useBoardState() {
   }
 
   function resetBoard() {
-    DFSstack = [];
+    DFSstack = [[0, 0]];
     setRunningState(false);
     setGridState(getEmptyBoard(numRows, numCols));
   }
@@ -89,6 +89,7 @@ function useBoardState() {
   }
 
   function generateRandomBoard() {
+    resetBoard();
     const emptyBoard = getEmptyBoard(numRows, numCols);
     const randMaze = generateMaze(emptyBoard, 0, 0, numRows - 1, numCols - 1);
     console.log(randMaze.length, randMaze[0].length);

@@ -3,8 +3,9 @@ function Board() {
     grid,
     numCols,
     boxSize,
-    resetBoard,
     handleOnCellClick,
+    getColor,
+    resetBoard,
     loadBoard,
     saveBoard,
     hideMaze,
@@ -12,11 +13,57 @@ function Board() {
     generateRandomBoard,
     running,
     emptyCellColor,
-    getColor, 
   } = useBoardState();
+
+  const settingsProps = {
+    resetBoard,
+    loadBoard,
+    saveBoard,
+    hideMaze,
+    toggleStart,
+    generateRandomBoard,
+    running,
+    emptyCellColor,
+  };
 
   return (
     <>
+      <Settings {...settingsProps} />
+      <div
+        className="board"
+        style={{
+          gridTemplateColumns: `repeat(${numCols}, ${boxSize}px)`,
+        }}
+      >
+        {grid.map((row, i) =>
+          row.map((cellType, j) => (
+            <div
+              onClick={() => handleOnCellClick(i, j)}
+              key={`${i}-${j}`}
+              className="board-ele"
+              style={{
+                width: boxSize,
+                height: boxSize,
+                backgroundColor: getColor(cellType),
+              }}
+            ></div>
+          ))
+        )}
+      </div>
+    </>
+  );
+
+  function Settings({
+    generateRandomBoard,
+    resetBoard,
+    loadBoard,
+    saveBoard,
+    hideMaze,
+    toggleStart,
+    running,
+    emptyCellColor,
+  }) {
+    return (
       <div id="settings">
         <button title="Resets the entire board" onClick={resetBoard}>
           <Clear />
@@ -52,27 +99,6 @@ function Board() {
           <Load />
         </button>
       </div>
-      <div
-        className="board"
-        style={{
-          gridTemplateColumns: `repeat(${numCols}, ${boxSize}px)`,
-        }}
-      >
-        {grid.map((row, i) =>
-          row.map((cellType, j) => (
-            <div
-              onClick={() => handleOnCellClick(i, j)}
-              className="board-ele"
-              key={`${i}-${j}`}
-              style={{
-                width: boxSize,
-                height: boxSize,
-                backgroundColor: getColor(cellType),
-              }}
-            ></div>
-          ))
-        )}
-      </div>
-    </>
-  );
+    );
+  }
 }
