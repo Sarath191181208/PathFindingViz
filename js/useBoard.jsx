@@ -137,6 +137,18 @@ function Conway() {
     }
   }
 
+  function handleOnCellClick(row, col) {
+    if (running) return;
+
+    let tempGrid = [...grid];
+    if (tempGrid[row][col] === GRID_CELL_TYPES.EMPTY) {
+      tempGrid[row][col] = GRID_CELL_TYPES.WALL;
+    } else if (tempGrid[row][col] === GRID_CELL_TYPES.WALL) {
+      tempGrid[row][col] = GRID_CELL_TYPES.EMPTY;
+    }
+    setGridState(tempGrid);
+  }
+
   function getColor(type) {
     switch (type) {
       case GRID_CELL_TYPES.WALL:
@@ -200,7 +212,7 @@ function Conway() {
         {grid.map((row, i) =>
           row.map((cellType, j) => (
             <div
-              //   onClick={() => toggleClick(i, j)}
+                onClick={() => handleOnCellClick(i, j)}
               className="board-ele"
               key={`${i}-${j}`}
               style={{
