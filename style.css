@@ -1,0 +1,76 @@
+@import url("https://fonts.googleapis.com/css2?family=Varela+Round&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Fredoka:wght@500&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Varela Round", "Fredoka", sans-serif;
+}
+
+:root {
+  --primary-color: rgb(153, 255, 0);
+}
+
+body {
+  background-color: rgb(0, 20, 40);
+  padding: 20px;
+}
+
+#settings {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: center;
+  padding: 2px;
+  background-color: rgba(0, 0, 0, 0.491);
+}
+
+#settings > button {
+  margin: 5px;
+  font-weight: bold;
+  padding: 8px;
+  border-radius: 8px;
+  /* border: 1px solid grey; */
+  border: none;
+  background: transparent;
+  color: white;
+  transition: 1s;
+}
+
+#settings > button:hover {
+  background-color: white;
+  color: black;
+}
+
+.board {
+  background: black;
+  padding: 20px;
+  display: grid;
+  justify-content: center;
+  gap: 5px;
+  border-radius: 8px;
+  /* animation: rotate-hue infinite 10s ease-in; */
+  min-height: 100vh;
+}
+
+.board-ele {
+  transition: background 0.2s linear;
+  border-radius: 5px;
+  border: "1px solid black";
+}
+
+@keyframes rotate-hue {
+  0%,
+  100% {
+    filter: hue-rotate(0deg);
+  }
+
+  50% {
+    filter: hue-rotate(360deg);
+  }
+}
