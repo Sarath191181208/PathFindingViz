@@ -32,9 +32,9 @@ const LONG_STEP_NEIGHBOURS = [
 
 const boxSize = 20;
 const { width, height } = getWindowDimensions();
-const paddingSize = 10;
-const numRows = parseInt(height / (boxSize + paddingSize));
-const numCols = parseInt(width / (boxSize + paddingSize));
+const paddingSize = 5;
+const numRows = parseInt((height-5*boxSize) / (boxSize + paddingSize));
+const numCols = parseInt((width-5*boxSize) / (boxSize + paddingSize));
 
 function Conway() {
   const [grid, setGrid] = useState(getEmptyBoard(numRows, numCols));
@@ -88,7 +88,8 @@ function Conway() {
     runSimulation();
   }
 
-  function clearBoard() {
+  function resetBoard() {
+    stack = [];
     setRunningState(false);
     setGridState(getEmptyBoard(numRows, numCols));
   }
@@ -156,13 +157,17 @@ function Conway() {
   return (
     <>
       <div id="settings">
-        <button onClick={clearBoard}>
+        <button title="Resets the entire board" onClick={resetBoard}>
           <Clear />
         </button>
-        <button onClick={generateRandomBoard}>
+        <button
+          title="Generates a random maze with a start and end"
+          onClick={generateRandomBoard}
+        >
           <Random />
         </button>
         <button
+          title="Toggles the solving of the maze"
           style={{
             color: running ? "grey" : "green",
           }}
@@ -170,13 +175,19 @@ function Conway() {
         >
           {running ? <Pause /> : <Play />}
         </button>
-        <button onClick={hideMaze}>
+        <button
+          title="Hide the cells of grey color i.e empty cells"
+          onClick={hideMaze}
+        >
           {emptyCellColor === "grey" ? <EyeSlash /> : <Eye />}
         </button>
-        <button onClick={saveBoard}>
+        <button
+          title="Saves the current board to local storage"
+          onClick={saveBoard}
+        >
           <Save />
         </button>
-        <button onClick={loadBoard}>
+        <button title="Loads the board from local storage" onClick={loadBoard}>
           <Load />
         </button>
       </div>

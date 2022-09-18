@@ -10,6 +10,7 @@
 
 :root {
   --primary-color: rgb(153, 255, 0);
+  --container-radius: 10px;
 }
 
 body {
@@ -18,7 +19,7 @@ body {
 }
 
 #settings {
-  position: absolute;
+  /* position: absolute; */
   top: 0;
   left: 0;
   z-index: 3;
@@ -26,15 +27,18 @@ body {
   align-items: center;
   width: 100%;
   justify-content: center;
-  padding: 2px;
-  background-color: rgba(0, 0, 0, 0.491);
+  border-top-left-radius:  var(--container-radius);
+  border-top-right-radius: var(--container-radius);
+  /* padding: 10px; */
+  background-color: rgba(200, 200, 200, 0.1);
 }
 
 #settings > button {
-  margin: 5px;
+  font-size: 1.2rem;
   font-weight: bold;
-  padding: 8px;
-  border-radius: 8px;
+  margin: 0.1em;
+  padding: 0.5em;
+  border-radius: var(--container-radius);
   /* border: 1px solid grey; */
   border: none;
   background: transparent;
@@ -43,8 +47,8 @@ body {
 }
 
 #settings > button:hover {
-  background-color: white;
-  color: black;
+  outline: 2px solid white;
+  /* background-color: white; */
 }
 
 .board {
@@ -52,10 +56,11 @@ body {
   padding: 20px;
   display: grid;
   justify-content: center;
+  border-bottom-left-radius: var(--container-radius);
+  border-bottom-right-radius: var(--container-radius);
   gap: 5px;
-  border-radius: 8px;
-  /* animation: rotate-hue infinite 10s ease-in; */
-  min-height: 100vh;
+  /* border-radius: 8px; */
+  min-height: 100%;
 }
 
 .board-ele {
