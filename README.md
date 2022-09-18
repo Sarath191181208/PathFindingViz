@@ -36,4 +36,3 @@ Learn About Hooks here:
 ## Further Improvements
 - [ ] Add more algorithms
 - [ ] Adding a slider to adjust the speed of the algorithms.
-- [ ] 
